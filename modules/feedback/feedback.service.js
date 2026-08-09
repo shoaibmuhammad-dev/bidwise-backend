@@ -10,11 +10,11 @@ const createFeedback = async (data) => {
     feedback,
   });
 
-  await sendFeedbackEmail({
-    name,
-    email,
-    feedback,
-  });
+  // await sendFeedbackEmail({
+  //   name,
+  //   email,
+  //   feedback,
+  // });
 
   return savedFeedback;
 };

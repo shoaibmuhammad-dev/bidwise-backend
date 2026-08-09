@@ -22,6 +22,10 @@ app.use("/api", analysisRoutes);
 app.use("/api/feedback", feebackRoutes);
 app.use("/api/contact", contactRoutes);
 
+app.use("/", (req, res) => {
+  res.send("Server is running");
+});
+
 // 404 error handler
 app.use((req, res) => {
   return res.status(404).json({

@@ -2,7 +2,13 @@ const asyncHandler = require("../../utils/asyncHandler");
 const { analyzeJob } = require("./service");
 
 const analyze = asyncHandler(async (req, res) => {
-  const { jobDescription, hourlyRate, experience, aiUsage } = req.body;
+  const {
+    jobDescription,
+    hourlyRate,
+    experience,
+    aiUsage,
+    userProfileDescription,
+  } = req.body;
 
   if (!jobDescription) {
     return res.status(400).json({
@@ -11,11 +17,19 @@ const analyze = asyncHandler(async (req, res) => {
     });
   }
 
+  if (!userProfileDescription) {
+    return res.status(400).json({
+      success: false,
+      message: "Personal profile description is required.",
+    });
+  }
+
   const analysis = await analyzeJob({
     jobDescription,
     hourlyRate,
     experience,
     aiUsage,
+    userProfileDescription,
   });
 
   return res.json({

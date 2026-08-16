@@ -25,7 +25,7 @@ app.use("/api", analysisRoutes);
 app.use("/api/feedback", feebackRoutes);
 app.use("/api/contact", contactRoutes);
 
-app.use("/", (req, res) => {
+app.get("/", (req, res) => {
   res.send("Server is running");
 });
 

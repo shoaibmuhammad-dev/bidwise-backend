@@ -1,5 +1,5 @@
 const asyncHandler = require("../../utils/asyncHandler");
-const { analyzeJob } = require("./service");
+const { analyzeJob } = require("./analysis.service");
 
 const analyze = asyncHandler(async (req, res) => {
   const {

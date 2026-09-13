@@ -17,10 +17,12 @@ app.use(
   }),
 );
 
-const analysisRoutes = require("./modules/analyzer/routes");
+const authRoutes = require("./modules/auth/auth.routes");
+const analysisRoutes = require("./modules/analyzer/analysis.routes");
 const feebackRoutes = require("./modules/feedback/feedback.routes");
 const contactRoutes = require("./modules/contact/contact.routes");
 
+app.use("/api/auth", authRoutes);
 app.use("/api", analysisRoutes);
 app.use("/api/feedback", feebackRoutes);
 app.use("/api/contact", contactRoutes);
@@ -36,6 +38,8 @@ app.use((req, res) => {
     message: "Route not found",
   });
 });
+
+// global error middleware
 app.use(require("./middleware/errorMiddleware"));
 
 module.exports = app;

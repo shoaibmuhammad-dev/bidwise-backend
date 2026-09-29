@@ -34,6 +34,16 @@ const userSchema = new mongoose.Schema(
     },
 
     totalAnalysis: { type: Number, default: 0 },
+
+    resetPasswordToken: {
+      type: String,
+      select: false,
+    },
+
+    resetPasswordExpiry: {
+      type: Date,
+      select: false,
+    },
   },
   {
     timestamps: true,

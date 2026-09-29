@@ -12,8 +12,6 @@ const createUser = asyncHandler(async (req, res) => {
   });
 });
 
-const loginUser = asyncHandler(async (req, res) => {});
-
 const verifyEmail = asyncHandler(async (req, res) => {
   const { email, token } = req.query;
 
@@ -50,9 +48,67 @@ const resendVerification = asyncHandler(async (req, res) => {
   });
 });
 
+const loginUser = asyncHandler(async (req, res) => {
+  const { token, user } = await authService.loginUser(req.body);
+
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure: false,
+    sameSite: "lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days, matches JWT_EXPIRY
+  });
+
+  return res.status(200).json({
+    success: true,
+    data: user,
+    message: "Login successful",
+  });
+});
+
+const logout = asyncHandler(async (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: false,
+    sameSite: "lax",
+    sameSite: "strict",
+    path: "/",
+  });
+
+  return res.status(200).json({
+    success: true,
+    message: "Logout successful",
+  });
+});
+
+const forgotPassword = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+
+  await authService.forgotPassword(email);
+
+  return res.status(200).json({
+    success: true,
+    message:
+      "If an account exists with this email, a password reset link has been sent.",
+  });
+});
+
+const resetPassword = asyncHandler(async (req, res) => {
+  const { token, password } = req.body;
+
+  await authService.resetPassword(token, password);
+
+  return res.status(200).json({
+    success: true,
+    message: "Password reset successful. Please log in with your new password.",
+  });
+});
+
 module.exports = {
   createUser,
-  loginUser,
   verifyEmail,
   resendVerification,
+  loginUser,
+  logout,
+  forgotPassword,
+  resetPassword,
 };

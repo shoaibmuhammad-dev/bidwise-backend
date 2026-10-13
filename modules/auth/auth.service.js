@@ -110,17 +110,36 @@ const loginUser = async (data) => {
   const isUser = await User.findOne({ email });
 
   if (!isUser) {
-    throw new ApiError("Email does not exist", 400);
+    throw new ApiError("Invalid email or password", 400);
+  }
+
+  if (!isUser.isVerified) {
+    const { rawToken, hashedToken } = generateVerificationToken();
+
+    isUser.verificationToken = hashedToken;
+    isUser.verificationTokenExpiry = Date.now() + 24 * 60 * 60 * 1000;
+
+    await isUser.save();
+
+    const verifyUrl = `${process.env.CLIENT_URL}/verify-email?token=${rawToken}&email=${email}`;
+
+    try {
+      await sendEmail({
+        to: email,
+        subject: "Verify your email",
+        html: verificationEmailTemplate(isUser.name, verifyUrl),
+      });
+    } catch (err) {
+      console.error("Failed to send verification email:", err.message);
+    }
+
+    throw new ApiError("Please verify your email before loggin in", 400);
   }
 
   const isPasswordValid = await bcrypt.compare(password, isUser.password);
 
   if (!isPasswordValid) {
     throw new ApiError("Invalid email or password", 400);
-  }
-
-  if (!isUser.isVerified) {
-    throw new ApiError("Please verify your email before loggin in", 400);
   }
 
   const token = generateToken(isUser._id);
